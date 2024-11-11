@@ -1,6 +1,6 @@
 {pkgs}: let
   callPackage = pkgs.callPackage;
 in {
-  tinydfr = callPackage ./hardware/apple/tinydfr {};
-  t2-kernel = callPackage ./hardware/apple/t2-kernel {};
+  tiny-dfr = callPackage ./hardware/apple/tiny-dfr {};
+  t2-linux = callPackage ./hardware/apple/t2-linux {};
 }
