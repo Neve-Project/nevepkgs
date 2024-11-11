@@ -1,16 +1,5 @@
-{
-  lib,
-  rustPlatform,
-  fetchFromGitHub,
-  pkg-config,
-  cairo,
-  gdk-pixbuf,
-  glib,
-  libinput,
-  libxml2,
-  pango,
-  udev,
-}: let
+{pkgs}:
+with pkgs; let
   src = fetchFromGitHub {
     owner = "kekrby";
     repo = "tiny-dfr";

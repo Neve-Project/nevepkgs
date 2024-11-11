@@ -10,49 +10,31 @@
     nixpkgs,
   }: let
     systems = ["x86_64-linux" "aarch64-linux"];
-    neveOverlay = final: prev: {
-      # Importa tutti i pacchetti dalla directory pkgs
-      nevePackages = import ./pkgs {inherit final prev;};
-    };
-  in rec {
-    # Esponi l'overlay sotto 'overlays.default' per l'utilizzo in altri progetti
-    overlays = {
-      default = neveOverlay;
-    };
-
-    # Per ogni sistema, importa nixpkgs con l'overlay e esponi i pacchetti
+  in {
     packages = builtins.listToAttrs (map (system: {
         name = system;
         value = let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [neveOverlay];
           };
+          nevePackages = import ./pkgs {inherit pkgs;};
         in
-          # Esponi tutti i pacchetti presenti in nevePackages
-          pkgs.nevePackages
-          // {
-            # Imposta il pacchetto predefinito
-            default = pkgs.nevePackages.tinydfr;
-          };
+          nevePackages;
       })
       systems);
 
-    # Definisci i checks per costruire tutti i pacchetti su tutti i sistemi
     checks = builtins.listToAttrs (map (system: {
         name = system;
         value = let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [neveOverlay];
           };
-          nevePkgs = pkgs.nevePackages;
+          nevePackages = import ./pkgs {inherit pkgs;};
         in
-          # Crea un insieme di derivazioni per tutti i pacchetti in nevePackages
           builtins.listToAttrs (map (pkgName: {
             name = pkgName;
-            value = nevePkgs.${pkgName};
-          }) (builtins.attrNames nevePkgs));
+            value = nevePackages.${pkgName};
+          }) (builtins.attrNames nevePackages));
       })
       systems);
   };

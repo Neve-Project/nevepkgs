@@ -1,8 +1,5 @@
-{
-  final,
-  prev,
-}: let
-  callPackage = final.callPackage;
+{pkgs}: let
+  callPackage = pkgs.callPackage;
 in {
   tinydfr = callPackage ./hardware/apple/tinydfr {};
 }
